@@ -1,150 +1,121 @@
-use std::collections::HashMap;
-use std::fs;
+mod config;
 
-fn add_to_hashmap(map: &mut HashMap<String, String>, config_file: String, binds: bool) {
-    let lines = config_file.split('\n');
-    for line in lines {
-        let quote_idxs = line
-            .bytes()
-            .enumerate()
-            .filter(|(_, c)| *c == b'"')
-            .map(|(i, _)| i)
-            .collect::<Vec<_>>();
+use wasm_bindgen::JsCast;
+use web_sys::{EventTarget, File, HtmlInputElement};
+use yew::prelude::*;
+use yewdux::prelude::*;
 
-        if quote_idxs.len() < 4 {
-            println!("Ignoring: {}", &line);
-            continue;
+const FILENAMES: &[&str] = &[
+    "cs2_user_convars_0_slot0.vcfg",
+    "cs2_machine_convars.vcfg",
+    "cs2_user_keys_0_slot0.vcfg",
+];
+
+#[derive(Default, Clone, PartialEq, Eq, Store)]
+struct State {
+    user_convars: Option<File>,
+    machine_convars: Option<File>,
+    binds: Option<File>,
+}
+
+#[derive(Clone, PartialEq, Properties)]
+struct FileInputProps {
+    name: String,
+    id: String,
+}
+
+#[function_component]
+fn FileInput(FileInputProps { name, id }: &FileInputProps) -> Html {
+    let (_, dispatch) = use_store::<State>();
+
+    // Loads file into appropriate place depending on element clicked
+    let callback = Callback::from(move |e: Event| {
+        let target: EventTarget = e.target().expect("Event should have a target");
+        let elm: HtmlInputElement = target.unchecked_into::<HtmlInputElement>();
+        let file = elm.files().unwrap().get(0).unwrap();
+        match elm.id().as_str() {
+            "file-input-0" => {
+                dispatch.reduce_mut(|state| state.user_convars = Some(file));
+            }
+            "file-input-1" => {
+                dispatch.reduce_mut(|state| state.machine_convars = Some(file));
+            }
+            "file-input-2" => {
+                dispatch.reduce_mut(|state| state.binds = Some(file));
+            }
+            _ => {}
         }
-        let key: &str = &line[(quote_idxs[0] + 1)..quote_idxs[1]];
-        let val: &str = &line[(quote_idxs[2] + 1)..quote_idxs[3]];
-        match binds {
-            true => map.insert(format!("bind \"{}\"", key), val.to_string()),
-            false => map.insert(key.to_string(), val.to_string()),
-        };
+    });
+
+    html! {
+        <label for={id.clone()} class="file-upload">
+            { name }
+            <input onchange={callback}
+                id={id.clone()}
+                type="file"
+                accept=".vcfg"
+            />
+        </label>
     }
 }
 
-fn filter_config(config: &mut HashMap<String, String>) {
-    let ignored_commands = vec![
-        "con_enable",
-        "sound_device_override",
-        "ui_mainmenu_bkgnd_movie_1016BB11$9",
-        "snd_menumusic_volume$4",
-        "cachedvalue_count_partybrowser",
-        "cl_promoted_settings_acknowledged",
-        "csgo_map_preview_scale",
+#[function_component]
+fn App() -> Html {
+    let (state, _) = use_store::<State>();
+
+    let names = vec![
+        match &state.user_convars {
+            Some(file) => file.name(),
+            None => String::from("None"),
+        },
+        match &state.machine_convars {
+            Some(file) => file.name(),
+            None => String::from("None"),
+        },
+        match &state.binds {
+            Some(file) => file.name(),
+            None => String::from("None"),
+        },
     ];
-    for command in ignored_commands {
-        config.remove(command);
-    }
-}
+    html! {
+        <>
+            <div class="title">
+                <h1>{ "Counter-Strike 2 Autoexec Builder" }</h1>
+            </div>
+            <div class="container">
+                <div class="panel">
+                    <p>
+                        { "Navigate to " }
+                        <samp> {"[STEAM INSTALL PATH]/userdata/[YOUR STEAM ID]/730/local/cfg"}</samp>
+                        {" (or wherever your steam install is) and upload the following 3 files:"}
+                    </p>
+                    <div class="file-upload-container"> {
+                            FILENAMES.iter().enumerate().map(|(idx, name)| {
+                                let id = format!("file-input-{}", idx);
+                                html! {
+                                    <FileInput name={*name} id={id} />
+                                }
+                            }).collect::<Html>()
 
-fn config_section(config: &mut HashMap<String, String>, name: &str, commands: Vec<&str>) -> String {
-    let mut ret = format!("// {}\n", name);
-    for command in commands {
-        let val = config.get(command).unwrap();
-        let new_line = format!("{} \"{}\"\n", command, val);
-        ret.push_str(&new_line);
-        config.remove(command);
+                    }</div>
+                    { "Loaded: " }
+                    <div> {
+                        names.iter().enumerate().map(|(idx, name)| {
+                            html! {
+                                <div> {
+                                    format!("{}: {}", idx, name)
+                                }</div>
+                            }
+                        }).collect::<Html>()
+                    }
+                    </div>
+                </div>
+                <div class="autoexec-box"></div>
+            </div>
+        </>
     }
-    ret.push('\n');
-    ret
-}
-
-fn write_sections(out: &mut String, config: &mut HashMap<String, String>) {
-    out.push_str(&config_section(
-        config,
-        "VIEWMODEL",
-        vec![
-            "viewmodel_presetpos",
-            "viewmodel_fov",
-            "viewmodel_offset_x",
-            "viewmodel_offset_y",
-            "viewmodel_offset_z",
-        ],
-    ));
-    out.push_str(&config_section(
-        config,
-        "CROSSHAIR",
-        vec![
-            "cl_crosshair_drawoutline",
-            "cl_crosshair_dynamic_maxdist_splitratio",
-            "cl_crosshair_dynamic_splitalpha_innermod",
-            "cl_crosshair_dynamic_splitalpha_outermod",
-            "cl_crosshair_dynamic_splitdist",
-            "cl_crosshair_friendly_warning",
-            "cl_crosshair_outlinethickness",
-            "cl_crosshair_recoil",
-            "cl_crosshair_sniper_show_normal_inaccuracy",
-            "cl_crosshair_sniper_width",
-            "cl_crosshair_t",
-            "cl_crosshairalpha",
-            "cl_crosshaircolor",
-            "cl_crosshaircolor_b",
-            "cl_crosshaircolor_g",
-            "cl_crosshaircolor_r",
-            "cl_crosshairdot",
-            "cl_crosshairgap",
-            "cl_crosshairgap_useweaponvalue",
-            "cl_crosshairsize",
-            "cl_crosshairstyle",
-            "cl_crosshairthickness",
-            "cl_crosshairusealpha",
-        ],
-    ));
 }
 
 fn main() {
-    let mut default_config = HashMap::new();
-    let default_machine_convars = fs::read_to_string("./defaults/cs2_machine_convars.vcfg")
-        .expect("Unable to read default machine convars");
-    add_to_hashmap(&mut default_config, default_machine_convars, false);
-    let default_user_convars = fs::read_to_string("./defaults/cs2_user_convars_0_slot0.vcfg")
-        .expect("Unable to read default user convars");
-    add_to_hashmap(&mut default_config, default_user_convars, false);
-
-    let mut custom_config = HashMap::new();
-    let custom_machine_convars = fs::read_to_string("./user-test/cs2_machine_convars.vcfg")
-        .expect("Unable to read custom machine convars");
-    add_to_hashmap(&mut custom_config, custom_machine_convars, false);
-    let custom_user_convars = fs::read_to_string("./user-test/cs2_user_convars_0_slot0.vcfg")
-        .expect("Unable to read custom user convars");
-    add_to_hashmap(&mut custom_config, custom_user_convars, false);
-    filter_config(&mut custom_config);
-
-    let default_binds = fs::read_to_string("./defaults/user_keys_default.vcfg")
-        .expect("Unable to read default user convars");
-    let custom_binds = fs::read_to_string("./user-test/cs2_user_keys_0_slot0.vcfg")
-        .expect("Unable to read custom user binds");
-    let mut binds = HashMap::new();
-    add_to_hashmap(&mut binds, default_binds, true);
-    add_to_hashmap(&mut binds, custom_binds, true);
-
-    let mut out = String::from("con_enable \"1\"\n\n");
-    write_sections(&mut out, &mut custom_config);
-
-    let mut binds_vec = Vec::new();
-    for (key, value) in binds {
-        binds_vec.push(format!("{} \"{}\"\n", key, value));
-    }
-    binds_vec.sort();
-    out.push_str("// BINDS\nunbindall\n");
-    for bind in binds_vec {
-        out.push_str(&bind);
-    }
-    out.push('\n');
-
-    out.push_str("// SETTINGS\n");
-    for (key, value) in custom_config {
-        if let Some(default_val) = default_config.get(&key) {
-            if &value == default_val {
-                continue;
-            }
-        }
-        let new_line = format!("{} \"{}\"\n", key, value);
-        out.push_str(&new_line);
-    }
-    fs::write("./exec.cfg", out).expect("Unable to write file");
-
-    // TODO Special Keybinds
+    yew::Renderer::<App>::new().render();
 }

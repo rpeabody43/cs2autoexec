@@ -1,3 +1,4 @@
 /target
-/user-test
-/defaults
+/user-config
+/dist
+*.swp
