@@ -125,6 +125,7 @@ fn App() -> Html {
         for idx in 0..=2 {
             state.files_valid[idx] = false;
         }
+        state.autoexec = None;
     });
 
     let autoexec_gen: Callback<MouseEvent> =
@@ -134,23 +135,6 @@ fn App() -> Html {
         Some(txt) => txt.clone(),
         None => "".to_string(),
     };
-
-    // https://rustwasm.github.io/wasm-bindgen/reference/js-promises-and-rust-futures.html
-    /*
-    let submit_files = Callback::from(move |e| {
-        let machine_convar_str: String = state.machine_convars.unwrap().to_string().into();
-        let user_convar_str: String = state.user_convars.unwrap().to_string().into();
-        let binds_str: String = state.binds.unwrap().text().to_string().into();
-        /*
-        state.autoexec = Some(config::config_str(
-            machine_convar_str,
-            user_convar_str,
-            binds_str,
-        ));
-        */
-        println!("{}", machine_convar_str);
-    });
-    */
 
     html! {
         <>
@@ -176,9 +160,16 @@ fn App() -> Html {
                     <button class="file-manage-button" onclick={clear_files}>{ "Clear Files" }</button>
                     <button class="file-manage-button" onclick={autoexec_gen}>{ "Generate Autoexec" }</button>
                 </div>
-                { test_str }
+                <p>
+                    { "Custom aliases (i.e. +jumpthrow) are not saved in your config and will not be placed in the autoexec" }
+                </p>
             </div>
-            <div class="autoexec-box"></div>
+            <div class="autoexec-box">
+                <textarea
+                    autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+                    rows={23} value={test_str}
+                />
+            </div>
         </div>
         </>
     }

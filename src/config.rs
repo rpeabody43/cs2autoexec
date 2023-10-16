@@ -39,18 +39,6 @@ fn filter_config(config: &mut HashMap<String, String>) {
     }
 }
 
-fn config_section(config: &mut HashMap<String, String>, name: &str, commands: Vec<&str>) -> String {
-    let mut ret = format!("// {}\n", name);
-    for command in commands {
-        let val = config.get(command).unwrap();
-        let new_line = format!("{} \"{}\"\n", command, val);
-        ret.push_str(&new_line);
-        config.remove(command);
-    }
-    ret.push('\n');
-    ret
-}
-
 macro_rules! section_body {
     ($config: expr, [$command: literal]) => {
         {

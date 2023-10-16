@@ -5,6 +5,8 @@
     --background: #272a3b;
     --text1: #fff;
     --panel: #4a506b;
+    --code: #222;
+    --code-border: #555;
 }
 
 body {
@@ -19,24 +21,47 @@ body {
     color: var(--titletext);
     font-weight: bold;
     margin: 0px;
-    padding: 10px;
-    border-bottom: 2px solid var(--panel); 
 }
 
+.container {
+    display: flex;
+    flex-direction: column;
+    margin: 20px;
+    margin-top: 5px;
+    margin-bottom: 0px;
+    gap: 10px;
+}
 
 .panel {
     background-color: var(--panel);
+    border: 2px solid var(--background);
     padding: 10px;
 }
 
 .panel p {
-    font-size: 16px;
+    font-size: 20px;
     text-align: center;
 }
 
+@media only screen and (min-width: 1440px) {
+    .container {
+        flex-direction: row;
+    }
+    .autoexec-box textarea {
+        height: 46em;
+    }
+}
+
+@media only screen and (max-width: 700px) {
+    .file-upload-container {
+        flex-direction: column;
+    }
+}
+
+
 samp {
-    background-color: #222;
-    border: 1px solid #555;
+    background-color: var(--code);
+    border: 1px solid var(--code-border);
     padding-right: 3px;
     padding-left: 3px;
 }
@@ -54,6 +79,9 @@ samp {
     cursor: pointer;
     user-select: none;
     margin: 10px;
+    flex-grow: 1;
+    flex-basis: 0;
+    text-align: center;
 }
 
 .file-valid {
@@ -65,7 +93,6 @@ samp {
 .file-different {
     --different: #ad9253;
     background-color: var(--different);
-    border: 2px solid var(--different);
 }
 
 .file-upload input {
@@ -91,5 +118,28 @@ samp {
 .file-manage-button:hover {
     border-color: var(--background);
     background-color: var(--background);
+}
+
+.autoexec-box {
+    width: 100%;
+    justify-content: center;
+    display: flex;
+}
+
+.autoexec-box textarea {
+    padding: 10px;
+    width: 100%;
+    background-color: var(--code);
+    border: 2px solid var(--background);
+    border-radius: 0px;
+    color: #fff;
+    outline: none;
+    resize: none;
+    font-size: 18px;
+    margin: 0px;
+}
+
+.autoexec-box textarea:focus {
+    border: 2px solid var(--titletext);
 }
 
