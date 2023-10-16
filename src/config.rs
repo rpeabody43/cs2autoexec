@@ -84,7 +84,6 @@ macro_rules! write_section {
 }
 
 fn write_sections(config: &mut HashMap<String, String>) -> String {
-    let mut out = String::new();
     let viewmodel = write_section!(
         config,
         "VIEWMODEL",

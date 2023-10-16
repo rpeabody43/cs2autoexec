@@ -36,6 +36,9 @@ body {
 
 samp {
     background-color: #222;
+    border: 1px solid #555;
+    padding-right: 3px;
+    padding-left: 3px;
 }
 
 .file-upload-container {
@@ -51,6 +54,18 @@ samp {
     cursor: pointer;
     user-select: none;
     margin: 10px;
+}
+
+.file-valid {
+    --valid: #53ad77;
+    background-color: var(--valid);
+    border: 2px solid var(--valid);
+}
+
+.file-different {
+    --different: #ad9253;
+    background-color: var(--different);
+    border: 2px solid var(--different);
 }
 
 .file-upload input {

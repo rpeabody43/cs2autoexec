@@ -6,27 +6,48 @@ use yew::prelude::*;
 use yewdux::prelude::*;
 
 const FILENAMES: &[&str] = &[
-    "cs2_user_convars_0_slot0.vcfg",
     "cs2_machine_convars.vcfg",
+    "cs2_user_convars_0_slot0.vcfg",
     "cs2_user_keys_0_slot0.vcfg",
 ];
 
 #[derive(Default, Clone, PartialEq, Eq, Store)]
 struct State {
-    user_convars: Option<File>,
     machine_convars: Option<File>,
+    user_convars: Option<File>,
     binds: Option<File>,
 }
 
 #[derive(Clone, PartialEq, Properties)]
 struct FileInputProps {
     name: String,
-    id: String,
+    idx: usize,
 }
 
 #[function_component]
-fn FileInput(FileInputProps { name, id }: &FileInputProps) -> Html {
-    let (_, dispatch) = use_store::<State>();
+fn FileInput(FileInputProps { name, idx }: &FileInputProps) -> Html {
+    let (state, dispatch) = use_store::<State>();
+    let id = format!("file-input-{}", idx);
+
+    let current_file = match idx {
+        0 => &state.machine_convars,
+        1 => &state.user_convars,
+        2 => &state.binds,
+        _ => {
+            panic!("index greater than 2 not allowed")
+        }
+    };
+
+    let target_filename = FILENAMES[*idx];
+    let style_class = if let Some(file) = current_file {
+        if file.name() == target_filename {
+            "file-valid"
+        } else {
+            "file-different"
+        }
+    } else {
+        ""
+    };
 
     // Loads file into appropriate place depending on element clicked
     let callback = Callback::from(move |e: Event| {
@@ -35,10 +56,10 @@ fn FileInput(FileInputProps { name, id }: &FileInputProps) -> Html {
         let file = elm.files().unwrap().get(0).unwrap();
         match elm.id().as_str() {
             "file-input-0" => {
-                dispatch.reduce_mut(|state| state.user_convars = Some(file));
+                dispatch.reduce_mut(|state| state.machine_convars = Some(file));
             }
             "file-input-1" => {
-                dispatch.reduce_mut(|state| state.machine_convars = Some(file));
+                dispatch.reduce_mut(|state| state.user_convars = Some(file));
             }
             "file-input-2" => {
                 dispatch.reduce_mut(|state| state.binds = Some(file));
@@ -48,7 +69,7 @@ fn FileInput(FileInputProps { name, id }: &FileInputProps) -> Html {
     });
 
     html! {
-        <label for={id.clone()} class="file-upload">
+        <label for={id.clone()} class={classes!("file-upload", style_class)}>
             { name }
             <input onchange={callback}
                 id={id.clone()}
@@ -63,20 +84,6 @@ fn FileInput(FileInputProps { name, id }: &FileInputProps) -> Html {
 fn App() -> Html {
     let (state, _) = use_store::<State>();
 
-    let names = vec![
-        match &state.user_convars {
-            Some(file) => file.name(),
-            None => String::from("None"),
-        },
-        match &state.machine_convars {
-            Some(file) => file.name(),
-            None => String::from("None"),
-        },
-        match &state.binds {
-            Some(file) => file.name(),
-            None => String::from("None"),
-        },
-    ];
     html! {
         <>
             <div class="title">
@@ -91,24 +98,12 @@ fn App() -> Html {
                     </p>
                     <div class="file-upload-container"> {
                             FILENAMES.iter().enumerate().map(|(idx, name)| {
-                                let id = format!("file-input-{}", idx);
                                 html! {
-                                    <FileInput name={*name} id={id} />
+                                    <FileInput name={*name} idx={idx} />
                                 }
                             }).collect::<Html>()
 
                     }</div>
-                    { "Loaded: " }
-                    <div> {
-                        names.iter().enumerate().map(|(idx, name)| {
-                            html! {
-                                <div> {
-                                    format!("{}: {}", idx, name)
-                                }</div>
-                            }
-                        }).collect::<Html>()
-                    }
-                    </div>
                 </div>
                 <div class="autoexec-box"></div>
             </div>
