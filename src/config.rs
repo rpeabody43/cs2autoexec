@@ -75,7 +75,7 @@ macro_rules! write_section {
     ($config: expr, $name: literal, [$($command: literal),+]) => {
         {
             format!(
-                "{}{}\n",
+                "// {}\n{}\n",
                 $name,
                 section_body!($config, [$($command),+])
             )

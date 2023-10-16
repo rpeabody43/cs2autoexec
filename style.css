@@ -72,3 +72,24 @@ samp {
     display: none;
 }
 
+.buttons-container {
+    display: flex;
+    justify-content: center;
+}
+
+.file-manage-button {
+    all: unset;
+    padding: 10px;
+    margin: 10px;
+    border: 3px solid var(--background);
+    border-radius: 10px;
+    background-color: var(--panel);
+    cursor: pointer;
+    user-select: none;
+}
+
+.file-manage-button:hover {
+    border-color: var(--background);
+    background-color: var(--background);
+}
+
