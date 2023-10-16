@@ -1,6 +1,11 @@
 use std::collections::HashMap;
 
-fn add_to_config(map: &mut HashMap<String, String>, binds: bool, config_file1: &str, config_file2: &str) {
+fn add_to_config(
+    map: &mut HashMap<String, String>,
+    binds: bool,
+    config_file1: &str,
+    config_file2: &str,
+) {
     for config_file in [config_file1, config_file2] {
         let lines = config_file.split('\n');
         for line in lines {
@@ -116,7 +121,11 @@ fn write_sections(config: &mut HashMap<String, String>) -> String {
     format!("{}{}", viewmodel, crosshair)
 }
 
-pub fn config_str(custom_machine_convars: String, custom_user_convars: String, custom_binds: String) -> String {
+pub fn config_str(
+    custom_machine_convars: String,
+    custom_user_convars: String,
+    custom_binds: String,
+) -> String {
     let mut default_config = HashMap::new();
     let mut custom_config = HashMap::new();
     let mut binds = HashMap::new();
@@ -125,14 +134,14 @@ pub fn config_str(custom_machine_convars: String, custom_user_convars: String, c
         &mut default_config,
         false,
         include_str!("../defaults/cs2_machine_convars.vcfg"),
-        include_str!("../defaults/cs2_user_convars_0_slot0.vcfg")
+        include_str!("../defaults/cs2_user_convars_0_slot0.vcfg"),
     );
 
     add_to_config(
         &mut custom_config,
         false,
         &custom_machine_convars,
-        &custom_user_convars
+        &custom_user_convars,
     );
     filter_config(&mut custom_config);
 
@@ -140,7 +149,7 @@ pub fn config_str(custom_machine_convars: String, custom_user_convars: String, c
         &mut binds,
         true,
         include_str!("../defaults/user_keys_default.vcfg"),
-        &custom_binds
+        &custom_binds,
     );
 
     let mut out = String::from("con_enable \"1\"\n\n");
@@ -148,7 +157,9 @@ pub fn config_str(custom_machine_convars: String, custom_user_convars: String, c
 
     let mut binds_vec = Vec::new();
     for (key, value) in binds {
-        if value == "<unbound>" { continue; }
+        if value == "<unbound>" {
+            continue;
+        }
         binds_vec.push(format!("{} \"{}\"\n", key, value));
     }
     binds_vec.sort();
