@@ -1,25 +1,26 @@
 use std::collections::HashMap;
-use std::fs;
 
-fn add_to_hashmap(map: &mut HashMap<String, String>, config_file: &str, binds: bool) {
-    let lines = config_file.split('\n');
-    for line in lines {
-        let quote_idxs = line
-            .bytes()
-            .enumerate()
-            .filter(|(_, c)| *c == b'"')
-            .map(|(i, _)| i)
-            .collect::<Vec<_>>();
+fn add_to_config(map: &mut HashMap<String, String>, binds: bool, config_file1: &str, config_file2: &str) {
+    for config_file in [config_file1, config_file2] {
+        let lines = config_file.split('\n');
+        for line in lines {
+            let quote_idxs = line
+                .bytes()
+                .enumerate()
+                .filter(|(_, c)| *c == b'"')
+                .map(|(i, _)| i)
+                .collect::<Vec<_>>();
 
-        if quote_idxs.len() < 4 {
-            continue;
+            if quote_idxs.len() < 4 {
+                continue;
+            }
+            let key: &str = &line[(quote_idxs[0] + 1)..quote_idxs[1]];
+            let val: &str = &line[(quote_idxs[2] + 1)..quote_idxs[3]];
+            match binds {
+                true => map.insert(format!("bind \"{}\"", key), val.to_string()),
+                false => map.insert(key.to_string(), val.to_string()),
+            };
         }
-        let key: &str = &line[(quote_idxs[0] + 1)..quote_idxs[1]];
-        let val: &str = &line[(quote_idxs[2] + 1)..quote_idxs[3]];
-        match binds {
-            true => map.insert(format!("bind \"{}\"", key), val.to_string()),
-            false => map.insert(key.to_string(), val.to_string()),
-        };
     }
 }
 
@@ -50,79 +51,113 @@ fn config_section(config: &mut HashMap<String, String>, name: &str, commands: Ve
     ret
 }
 
-fn write_sections(out: &mut String, config: &mut HashMap<String, String>) {
-    out.push_str(
-        &config_section(
-            config,
-            "VIEWMODEL",
-            vec![
-                "viewmodel_presetpos",
-                "viewmodel_fov",
-                "viewmodel_offset_x",
-                "viewmodel_offset_y",
-                "viewmodel_offset_z",
-            ],
-        )
-    );
-    out.push_str(
-        &config_section(
-            config,
-            "CROSSHAIR",
-            vec![
-                "cl_crosshair_drawoutline",
-                "cl_crosshair_dynamic_maxdist_splitratio",
-                "cl_crosshair_dynamic_splitalpha_innermod",
-                "cl_crosshair_dynamic_splitalpha_outermod",
-                "cl_crosshair_dynamic_splitdist",
-                "cl_crosshair_friendly_warning",
-                "cl_crosshair_outlinethickness",
-                "cl_crosshair_recoil",
-                "cl_crosshair_sniper_show_normal_inaccuracy",
-                "cl_crosshair_sniper_width",
-                "cl_crosshair_t",
-                "cl_crosshairalpha",
-                "cl_crosshaircolor",
-                "cl_crosshaircolor_b",
-                "cl_crosshaircolor_g",
-                "cl_crosshaircolor_r",
-                "cl_crosshairdot",
-                "cl_crosshairgap",
-                "cl_crosshairgap_useweaponvalue",
-                "cl_crosshairsize",
-                "cl_crosshairstyle",
-                "cl_crosshairthickness",
-                "cl_crosshairusealpha",
-                "cl_fixedcrosshairgap"
-            ],
-        )
-    );
+macro_rules! section_body {
+    ($config: expr, [$command: literal]) => {
+        {
+            let val = $config.get($command).unwrap();
+            let line = format!("{} \"{}\"\n", $command, val);
+            $config.remove($command);
+            line
+        }
+    };
+    ($config: expr, [$command: literal, $($x: literal),+]) => {
+        {
+            format!(
+                "{}{}",
+                section_body!($config, [$command]),
+                section_body!($config, [$($x),+])
+            )
+        }
+    }
 }
 
-pub fn config_str() -> String {
-    let mut default_config = HashMap::new();
-    let default_machine_convars = include_str!("../defaults/cs2_machine_convars.vcfg");
-    add_to_hashmap(&mut default_config, default_machine_convars, false);
-    let default_user_convars = include_str!("../defaults/cs2_user_convars_0_slot0.vcfg");
-    add_to_hashmap(&mut default_config, default_user_convars, false);
+macro_rules! write_section {
+    ($config: expr, $name: literal, [$($command: literal),+]) => {
+        {
+            format!(
+                "{}{}\n",
+                $name,
+                section_body!($config, [$($command),+])
+            )
+        }
+    }
+}
 
+fn write_sections(config: &mut HashMap<String, String>) -> String {
+    let mut out = String::new();
+    let viewmodel = write_section!(
+        config,
+        "VIEWMODEL",
+        [
+            "viewmodel_presetpos",
+            "viewmodel_fov",
+            "viewmodel_offset_x",
+            "viewmodel_offset_y",
+            "viewmodel_offset_z"
+        ]
+    );
+    let crosshair = write_section!(
+        config,
+        "CROSSHAIR",
+        [
+            "cl_crosshair_drawoutline",
+            "cl_crosshair_dynamic_maxdist_splitratio",
+            "cl_crosshair_dynamic_splitalpha_innermod",
+            "cl_crosshair_dynamic_splitalpha_outermod",
+            "cl_crosshair_dynamic_splitdist",
+            "cl_crosshair_friendly_warning",
+            "cl_crosshair_outlinethickness",
+            "cl_crosshair_recoil",
+            "cl_crosshair_sniper_show_normal_inaccuracy",
+            "cl_crosshair_sniper_width",
+            "cl_crosshair_t",
+            "cl_crosshairalpha",
+            "cl_crosshaircolor",
+            "cl_crosshaircolor_b",
+            "cl_crosshaircolor_g",
+            "cl_crosshaircolor_r",
+            "cl_crosshairdot",
+            "cl_crosshairgap",
+            "cl_crosshairgap_useweaponvalue",
+            "cl_crosshairsize",
+            "cl_crosshairstyle",
+            "cl_crosshairthickness",
+            "cl_crosshairusealpha",
+            "cl_fixedcrosshairgap"
+        ]
+    );
+    format!("{}{}", viewmodel, crosshair)
+}
+
+pub fn config_str(custom_machine_convars: String, custom_user_convars: String, custom_binds: String) -> String {
+    let mut default_config = HashMap::new();
     let mut custom_config = HashMap::new();
-    let custom_machine_convars = fs::read_to_string("./user-config/cs2_machine_convars.vcfg")
-        .expect("Unable to read custom machine convars");
-    add_to_hashmap(&mut custom_config, &custom_machine_convars, false);
-    let custom_user_convars = fs::read_to_string("./user-config/cs2_user_convars_0_slot0.vcfg")
-        .expect("Unable to read custom user convars");
-    add_to_hashmap(&mut custom_config, &custom_user_convars, false);
+    let mut binds = HashMap::new();
+
+    add_to_config(
+        &mut default_config,
+        false,
+        include_str!("../defaults/cs2_machine_convars.vcfg"),
+        include_str!("../defaults/cs2_user_convars_0_slot0.vcfg")
+    );
+
+    add_to_config(
+        &mut custom_config,
+        false,
+        &custom_machine_convars,
+        &custom_user_convars
+    );
     filter_config(&mut custom_config);
 
-    let default_binds = include_str!("../defaults/user_keys_default.vcfg");
-    let custom_binds = fs::read_to_string("./user-config/cs2_user_keys_0_slot0.vcfg")
-        .expect("Unable to read custom user binds");
-    let mut binds = HashMap::new();
-    add_to_hashmap(&mut binds, default_binds, true);
-    add_to_hashmap(&mut binds, &custom_binds, true);
+    add_to_config(
+        &mut binds,
+        true,
+        include_str!("../defaults/user_keys_default.vcfg"),
+        &custom_binds
+    );
 
     let mut out = String::from("con_enable \"1\"\n\n");
-    write_sections(&mut out, &mut custom_config);
+    out.push_str(&write_sections(&mut custom_config));
 
     let mut binds_vec = Vec::new();
     for (key, value) in binds {
