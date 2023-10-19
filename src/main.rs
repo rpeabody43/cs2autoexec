@@ -184,8 +184,9 @@ fn App() -> Html {
             <div class="panel">
                 <h2> {"Initial Setup"} </h2>
                 <p>
+                    <span class="number"> {"1. "}</span>
                     { "Upload the following 3 files from " }
-                    <br /><samp> {"[STEAM INSTALL PATH]/userdata/[YOUR STEAM ID]/730/local/cfg"}</samp>
+                    <br /><p class="cfg"> {"[STEAM INSTALL PATH]/userdata/[YOUR STEAM ID]/730/local/cfg"}</p>
                 </p>
                 <div class="file-upload-flex"> {
                         FILENAMES.iter().enumerate().map(|(idx, name)| {
@@ -199,10 +200,23 @@ fn App() -> Html {
                     <button class="file-manage-button" onclick={clear_files}>{ "Clear Files" }</button>
                     <button class="file-manage-button" onclick={autoexec_gen}>{ "Generate Autoexec" }</button>
                 </div>
-                <p>
-                    { "Custom aliases (i.e. +jumpthrow) are not saved in your config and will not be placed in the autoexec" }
-                </p>
-                <button id="download-button" onclick={download_callback} class="file-manage-button">{ "Download autoexec.cfg" }</button>
+                <p style="font-size: 14px;">{ "Custom aliases (i.e. +jumpthrow) are not saved in your config and will not be placed in the autoexec." }</p>
+                <div id="directions-list">
+                    <p>
+                        <span class="number"> {"2. "}</span>
+                        { "Edit with your preferred custom binds." }</p>
+                    <p>
+                        <span class="number"> {"3. "}</span>
+                        { "Download and place in" }
+                        <br /><p class="cfg"> {"[STEAM INSTALL PATH]/steamapps/common/Counter-Strike Global Offensive/game/csgo/cfg"}</p>
+                        <button id="download-button" onclick={download_callback} class="file-manage-button">{ "Download autoexec.cfg" }</button>
+                    </p>
+                    <p>
+                        <span class="number"> {"4. "}</span>
+                        { "Go into your CS2 launch options and put"}
+                        <br /><p class="cfg"> {"+exec autoexec"} </p>
+                    </p>
+                </div>
             </div>
             <div class="autoexec-box">
                 <textarea
