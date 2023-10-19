@@ -183,7 +183,7 @@ pub fn config_str(
     for setting in settings_vec {
         out.push_str(&setting);
     }
-    out.push_str("\n\necho \"--- autoexec loaded ---\"");
+    out.push_str("\necho \"--- autoexec loaded ---\"\n// Generated at https://rpeabody43.github.io/cs2autoexec/");
     out
     // TODO Special Keybinds
 }

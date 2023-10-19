@@ -1,8 +1,9 @@
 mod config;
+mod special_binds;
 
 use wasm_bindgen::JsCast;
 use wasm_bindgen_futures::JsFuture;
-use web_sys::{EventTarget, File, HtmlInputElement};
+use web_sys::{EventTarget, File, HtmlElement, HtmlInputElement};
 use yew::prelude::*;
 use yewdux::prelude::*;
 
@@ -114,6 +115,28 @@ async fn load_all_files(state: &mut State) {
     ));
 }
 
+fn download_file(text: &str) {
+    let filename = "autoexec.cfg";
+
+    let blob_val = js_sys::Array::from_iter(std::iter::once(wasm_bindgen::JsValue::from_str(text)));
+
+    let mut blob_props = web_sys::BlobPropertyBag::new();
+    blob_props.type_("text/cfg");
+    let blob = web_sys::Blob::new_with_str_sequence_and_options(&blob_val, &blob_props).unwrap();
+    web_sys::window().unwrap().alert().unwrap();
+    let url = web_sys::Url::create_object_url_with_blob(&blob).unwrap();
+
+    let document = web_sys::window().unwrap().document().unwrap();
+    let element = document
+        .create_element("a")
+        .unwrap()
+        .unchecked_into::<HtmlElement>();
+    element.set_attribute("href", &url).unwrap();
+    element.set_attribute("download", filename).unwrap();
+
+    element.click();
+}
+
 #[function_component]
 fn App() -> Html {
     let (state, dispatch) = use_store::<State>();
@@ -131,10 +154,27 @@ fn App() -> Html {
     let autoexec_gen: Callback<MouseEvent> =
         dispatch.reduce_mut_future_callback(|state| Box::pin(load_all_files(state)));
 
-    let test_str = match &state.autoexec {
+    let textbox_update = Callback::from(move |e: Event| {
+        let target: EventTarget = e.target().expect("E should have a target");
+        let text_val = target.unchecked_into::<HtmlInputElement>().value();
+        let value_opt = if text_val.is_empty() {
+            None
+        } else {
+            Some(text_val)
+        };
+        dispatch.reduce_mut(|state| state.autoexec = value_opt);
+    });
+
+    let textbox_value = match &state.autoexec {
         Some(txt) => txt.clone(),
         None => "".to_string(),
     };
+
+    let download_callback = Callback::from(move |_e| {
+        if let Some(text) = &state.autoexec {
+            download_file(text);
+        }
+    });
 
     html! {
         <>
@@ -143,12 +183,12 @@ fn App() -> Html {
         </div>
         <div class="container">
             <div class="panel">
+                <h2> {"Initial Setup"} </h2>
                 <p>
-                    { "Navigate to " }
-                    <samp> {"[STEAM INSTALL PATH]/userdata/[YOUR STEAM ID]/730/local/cfg"}</samp>
-                    {" (or wherever your steam install is) and upload the following 3 files:"}
+                    { "Upload the following 3 files from " }
+                    <br /><samp> {"[STEAM INSTALL PATH]/userdata/[YOUR STEAM ID]/730/local/cfg"}</samp>
                 </p>
-                <div class="file-upload-container"> {
+                <div class="file-upload-flex"> {
                         FILENAMES.iter().enumerate().map(|(idx, name)| {
                             html! {
                                 <FileInput name={*name} idx={idx} />
@@ -163,13 +203,16 @@ fn App() -> Html {
                 <p>
                     { "Custom aliases (i.e. +jumpthrow) are not saved in your config and will not be placed in the autoexec" }
                 </p>
+                <button id="download-button" onclick={download_callback} class="file-manage-button">{ "Download autoexec.cfg" }</button>
             </div>
             <div class="autoexec-box">
                 <textarea
                     autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
-                    rows={23} value={test_str}
+                    rows={23} value={textbox_value}
+                    onchange={textbox_update}
                 />
             </div>
+            <special_binds::SpecialBindsContainer />
         </div>
         </>
     }
