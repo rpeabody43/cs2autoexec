@@ -9,6 +9,16 @@
     --code-border: #555;
 }
 
+::-moz-selection { /* Code for Firefox */
+  color: #fff;
+  background: var(--titletext);
+}
+
+::selection {
+  color: #fff;
+  background: var(--titletext);
+}
+
 body {
     background-color: var(--background);
     color: var(--text1);
@@ -36,37 +46,20 @@ body {
     background-color: var(--panel);
     border: 2px solid var(--background);
     padding: 10px;
-}
-
-.panel p {
+    position: relative;
     font-size: 20px;
     text-align: center;
 }
-
-@media only screen and (min-width: 1440px) {
-    .container {
-        flex-direction: row;
-    }
-    .autoexec-box textarea {
-        height: 46em;
-    }
-}
-
-@media only screen and (max-width: 700px) {
-    .file-upload-container {
-        flex-direction: column;
-    }
-}
-
 
 samp {
     background-color: var(--code);
     border: 1px solid var(--code-border);
     padding-right: 3px;
+    font-size: 0.8em;
     padding-left: 3px;
 }
 
-.file-upload-container {
+.file-upload-flex {
     display: flex;
     justify-content: center;
 }
@@ -82,6 +75,7 @@ samp {
     flex-grow: 1;
     flex-basis: 0;
     text-align: center;
+    font-size: 16px;
 }
 
 .file-valid {
@@ -113,6 +107,7 @@ samp {
     background-color: var(--panel);
     cursor: pointer;
     user-select: none;
+    font-size: 16px;
 }
 
 .file-manage-button:hover {
@@ -123,19 +118,20 @@ samp {
 .autoexec-box {
     width: 100%;
     justify-content: center;
+    flex-direction: column;
     display: flex;
 }
 
 .autoexec-box textarea {
     padding: 10px;
-    width: 100%;
+    max-width: 100%;
     background-color: var(--code);
     border: 2px solid var(--background);
     border-radius: 0px;
     color: #fff;
     outline: none;
     resize: none;
-    font-size: 18px;
+    font-size: 16px;
     margin: 0px;
 }
 
@@ -143,3 +139,77 @@ samp {
     border: 2px solid var(--titletext);
 }
 
+a {
+    color: var(--text1);
+}
+
+.special-bind {
+    position: relative;
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+.special-bind p {
+    text-align: left;
+}
+
+.special-bind h3 {
+    background-color: var(--background);
+    padding: 7px;
+    margin: 2px;
+}
+
+.bind-content p {
+    margin: 5px;
+}
+
+.bind-content img {
+    display: block;
+    width: 85%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#binds {
+    overflow: auto;
+    height: 31em;
+}
+
+.cfg {
+    background-color: var(--code);
+    border: 1px solid var(--code-border);
+    padding: 10px;
+    font-size: 16px;
+    font-family: monospace;
+}
+
+#download-button {
+    width: 80%;
+}
+
+@media only screen and (min-width: 1440px) {
+    .panel {
+        width: 25%;
+    }
+    .container {
+        flex-direction: row;
+    }
+    .autoexec-box {
+        width: 50%;
+    }
+    .autoexec-box textarea {
+        font-size: 18px;
+        height: 43em;
+    }
+    .file-upload-flex {
+        flex-direction: column;
+    }
+    .panel {
+        position: relative;
+    }
+    #download-button {
+        position: absolute;
+        bottom: 0;
+        left: 5%;
+    }
+}
