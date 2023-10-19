@@ -47,16 +47,24 @@ body {
     border: 2px solid var(--background);
     padding: 10px;
     position: relative;
-    font-size: 20px;
+    font-size: 18px;
     text-align: center;
 }
 
-samp {
-    background-color: var(--code);
-    border: 1px solid var(--code-border);
-    padding-right: 3px;
-    font-size: 0.8em;
-    padding-left: 3px;
+#directions-list {
+    display: flex;
+    flex-direction: row;
+}
+
+#directions-list p {
+    margin-bottom: 5px;
+    margin-top: 5px;
+    flex-grow: 1;
+    flex-basis: 0;
+}
+
+.number {
+    color: var(--titletext);
 }
 
 .file-upload-flex {
@@ -108,6 +116,8 @@ samp {
     cursor: pointer;
     user-select: none;
     font-size: 16px;
+    flex-basis: 0;
+    flex-grow: 1;
 }
 
 .file-manage-button:hover {
@@ -176,6 +186,7 @@ a {
 }
 
 .cfg {
+    margin: 5px;
     background-color: var(--code);
     border: 1px solid var(--code-border);
     padding: 10px;
@@ -190,6 +201,9 @@ a {
 @media only screen and (min-width: 1440px) {
     .panel {
         width: 25%;
+    }
+    #directions-list {
+        flex-direction: column;
     }
     .container {
         flex-direction: row;
@@ -206,10 +220,5 @@ a {
     }
     .panel {
         position: relative;
-    }
-    #download-button {
-        position: absolute;
-        bottom: 0;
-        left: 5%;
     }
 }
