@@ -59,8 +59,8 @@ pub fn SpecialBindsContainer() -> Html {
                     description="Binds a key to jump and release a grenade at the same time. Unnecessary in CS2 but nice to have."
                 >
                     {from_cfg_string(
-                        r#"alias "+jumpaction" "+jump;"
-                        alias "+throwaction" "-attack; -attack2"
+                        r#"alias "+throwaction" "-attack; -attack2"
+                        alias "+jumpaction" "+jump;"
                         alias "-jumpaction" "-jump"
                         bind "[KEY]" "+jumpaction;+throwaction;""#
                     )}
