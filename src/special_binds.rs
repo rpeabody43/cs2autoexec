@@ -70,7 +70,8 @@ pub fn SpecialBindsContainer() -> Html {
                     description="Binds a key to run, jump and release a grenade at the same time."
                 >
                     {from_cfg_string(
-                        r#"alias "+runthrow" "+forward;+jump;"
+                        r#"alias "+throwaction" "-attack; -attack2"
+                        alias "+runthrow" "+forward;+jump;"
                         alias "-runthrow" "-jump;-forward"
                         bind "[KEY]" "+runthrow;+throwaction""#
                     )}
