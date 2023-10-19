@@ -123,7 +123,6 @@ fn download_file(text: &str) {
     let mut blob_props = web_sys::BlobPropertyBag::new();
     blob_props.type_("text/cfg");
     let blob = web_sys::Blob::new_with_str_sequence_and_options(&blob_val, &blob_props).unwrap();
-    web_sys::window().unwrap().alert().unwrap();
     let url = web_sys::Url::create_object_url_with_blob(&blob).unwrap();
 
     let document = web_sys::window().unwrap().document().unwrap();
