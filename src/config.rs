@@ -1,5 +1,14 @@
 use std::collections::HashMap;
 
+macro_rules! strip_key {
+    ($key: expr) => {
+        match $key.find('$') {
+            Some (idx) => &$key[..idx],
+            None => $key
+        }
+    }
+}
+
 fn add_to_config(
     map: &mut HashMap<String, String>,
     binds: bool,
@@ -19,7 +28,7 @@ fn add_to_config(
             if quote_idxs.len() < 4 {
                 continue;
             }
-            let key: &str = &line[(quote_idxs[0] + 1)..quote_idxs[1]];
+            let key: &str = strip_key!(&line[(quote_idxs[0] + 1)..quote_idxs[1]]);
             let val: &str = &line[(quote_idxs[2] + 1)..quote_idxs[3]];
             match binds {
                 true => map.insert(format!("bind \"{}\"", key), val.to_string()),
@@ -33,11 +42,14 @@ fn filter_config(config: &mut HashMap<String, String>) {
     let ignored_commands = vec![
         "con_enable",
         "sound_device_override",
-        "ui_mainmenu_bkgnd_movie_1016BB11$9",
-        "snd_menumusic_volume$4",
+        "ui_mainmenu_bkgnd_movie_1016BB11",
+        "snd_menumusic_volume",
         "cachedvalue_count_partybrowser",
         "cl_promoted_settings_acknowledged",
         "csgo_map_preview_scale",
+        "cl_redemption_reset_timestamp",
+        "player_teamplayedlast",
+        "ui_playsettings_maps_listen_competitive",
     ];
     for command in ignored_commands {
         config.remove(command);
