@@ -716,7 +716,7 @@ async function __wbg_init(input) {
     if (wasm !== undefined) return wasm;
 
     if (typeof input === 'undefined') {
-        input = new URL('cs2-autoexec-ecbe451d68eaaa5_bg.wasm', import.meta.url);
+        input = new URL('cs2-autoexec-7db8b33914ea319_bg.wasm', import.meta.url);
     }
     const imports = __wbg_get_imports();
 
