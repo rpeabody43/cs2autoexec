@@ -1,1 +1,24 @@
-<!doctype html><html lang=en><meta charset=utf-8><link href=cs2autoexec/style-68d7967427eccdec.css integrity=sha384-V2RtLNjRuEQh5940qO210JEwv3QLxBGg9evbQIxpgUKrBj9LDX/7mqjEAaBIGhRF rel=stylesheet><title>CS2 Autoexec Builder</title><base href=cs2autoexec/><link crossorigin href=cs2autoexec/cs2-autoexec-42de6699dd211b49.js integrity=sha384-5r/ccg6aqSU6CbreCW9IfVXJbf8u0f5EE9UZnF+kmYApvzJx7EdbzZIOJ1KQJS1A rel=modulepreload><link as=fetch crossorigin href=cs2autoexec/cs2-autoexec-42de6699dd211b49_bg.wasm integrity=sha384-WuG5Dh8pMkNFCGmBF+1T67OEJdvuct129sN6ZRLErXQY5rRy4Of5SXRlTmixdW95 rel=preload type=application/wasm></head><body><script type=module>import a,*as b from"cs2autoexec/cs2-autoexec-42de6699dd211b49.js";a(`cs2autoexec/cs2-autoexec-42de6699dd211b49_bg.wasm`);window.wasmBindings=b</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="/style-58cf429834fc76a5.css" integrity="sha384&#x2D;sRd3U9aOuk2coNiKRlAqg8iVjIbEGAHHowrWoNvHFB08rL1O946Ax4w6qQdJIhkD"/>
+        
+        <title>CS2 Autoexec Builder</title>
+        <base href="/" />
+    
+<link rel="modulepreload" href="/cs2-autoexec-ca64ba0fea744eab.js" crossorigin=anonymous integrity="sha384-JTkQfoqxvHGQ9EJxPWafiOI95a7hbm4Ucwl1dGP+UCspLo6sxYysGry6w8xkYDo4">
+<link rel="preload" href="/cs2-autoexec-ca64ba0fea744eab_bg.wasm" crossorigin=anonymous integrity="sha384-er5d2HbclGZnPMvxrHoHjIaZUF/gNS+wiBD0MA1Xne69DY+UFS0eOmy4ZBaWQBsU" as="fetch" type="application/wasm"></head>
+    <body>
+<script type="module">
+import init, * as bindings from '/cs2-autoexec-ca64ba0fea744eab.js';
+const wasm = await init('/cs2-autoexec-ca64ba0fea744eab_bg.wasm');
+
+
+window.wasmBindings = bindings;
+
+
+dispatchEvent(new CustomEvent("TrunkApplicationStarted", {detail: {wasm}}));
+
+</script></body>
+</html>

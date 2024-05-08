@@ -1,0 +1,224 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap');
+
+:root {
+    --titletext: #ff9b01;
+    --background: #272a3b;
+    --text1: #fff;
+    --panel: #4a506b;
+    --code: #222;
+    --code-border: #555;
+}
+
+::-moz-selection { /* Code for Firefox */
+  color: #fff;
+  background: var(--titletext);
+}
+
+::selection {
+  color: #fff;
+  background: var(--titletext);
+}
+
+body {
+    background-color: var(--background);
+    color: var(--text1);
+    font-family: 'Lato', sans-serif;
+    margin: 0px;
+}
+
+.title {
+    text-align: center;
+    color: var(--titletext);
+    font-weight: bold;
+    margin: 0px;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    margin: 20px;
+    margin-top: 5px;
+    margin-bottom: 0px;
+    gap: 10px;
+}
+
+.panel {
+    background-color: var(--panel);
+    border: 2px solid var(--background);
+    padding: 10px;
+    position: relative;
+    font-size: 18px;
+    text-align: center;
+}
+
+#directions-list {
+    display: flex;
+    flex-direction: row;
+}
+
+#directions-list p {
+    margin-bottom: 5px;
+    margin-top: 5px;
+    flex-grow: 1;
+    flex-basis: 0;
+}
+
+.number {
+    color: var(--titletext);
+}
+
+.file-upload-flex {
+    display: flex;
+    justify-content: center;
+}
+
+.file-upload {
+    padding: 10px;
+    border: 2px dashed var(--panel);
+    border-radius: 10px;
+    background-color: var(--background);
+    cursor: pointer;
+    user-select: none;
+    margin: 10px;
+    flex-grow: 1;
+    flex-basis: 0;
+    text-align: center;
+    font-size: 16px;
+}
+
+.file-valid {
+    --valid: #53ad77;
+    background-color: var(--valid);
+    border: 2px solid var(--valid);
+}
+
+.file-different {
+    --different: #ad9253;
+    background-color: var(--different);
+}
+
+.file-upload input {
+    display: none;
+}
+
+.buttons-container {
+    display: flex;
+    justify-content: center;
+}
+
+.file-manage-button {
+    all: unset;
+    padding: 10px;
+    margin: 10px;
+    border: 3px solid var(--background);
+    border-radius: 10px;
+    background-color: var(--panel);
+    cursor: pointer;
+    user-select: none;
+    font-size: 16px;
+    flex-basis: 0;
+    flex-grow: 1;
+}
+
+.file-manage-button:hover {
+    border-color: var(--background);
+    background-color: var(--background);
+}
+
+.autoexec-box {
+    width: 100%;
+    justify-content: center;
+    flex-direction: column;
+    display: flex;
+}
+
+.autoexec-box textarea {
+    padding: 10px;
+    max-width: 100%;
+    background-color: var(--code);
+    border: 2px solid var(--background);
+    border-radius: 0px;
+    color: #fff;
+    outline: none;
+    resize: none;
+    font-size: 16px;
+    margin: 0px;
+}
+
+.autoexec-box textarea:focus {
+    border: 2px solid var(--titletext);
+}
+
+a {
+    color: var(--text1);
+}
+
+.special-bind {
+    position: relative;
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+.special-bind p {
+    text-align: left;
+}
+
+.special-bind h3 {
+    background-color: var(--background);
+    padding: 7px;
+    margin: 2px;
+}
+
+.bind-content p {
+    margin: 5px;
+}
+
+.bind-content img {
+    display: block;
+    width: 85%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#binds {
+    overflow: auto;
+    height: 31em;
+}
+
+.cfg {
+    margin: 5px;
+    background-color: var(--code);
+    border: 1px solid var(--code-border);
+    padding: 10px;
+    font-size: 16px;
+    font-family: monospace;
+}
+
+#download-button {
+    width: 80%;
+}
+
+@media only screen and (min-width: 1440px) {
+    .panel {
+        width: 25%;
+    }
+    #directions-list {
+        flex-direction: column;
+    }
+    .container {
+        flex-direction: row;
+    }
+    .autoexec-box {
+        width: 50%;
+    }
+    .autoexec-box textarea {
+        font-size: 18px;
+        height: 44em;
+    }
+    .file-upload-flex {
+        flex-direction: column;
+    }
+    .panel {
+        position: relative;
+    }
+}
