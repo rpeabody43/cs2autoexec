@@ -55,53 +55,33 @@ pub fn SpecialBindsContainer() -> Html {
             <h2> { "Useful Binds" } </h2>
             <div id="binds">
                 <SimpleBind
-                    title="Jumpthrow"
-                    description="Binds a key to jump and release a grenade at the same time. Unnecessary in CS2 but nice to have."
+                    title="Radar Toggle"
+                    description="Zoom the radar in and out with a keybind"
                 >
-                    {from_cfg_string(
-                        r#"alias "+throwaction" "-attack; -attack2"
-                        alias "+jumpaction" "+jump;"
-                        alias "-jumpaction" "-jump"
-                        bind "[KEY]" "+jumpaction;+throwaction;""#
-                    )}
+                    { from_cfg_string("bind \"[KEY]\" \"toggle cl_radar_scale 1.0 0.4\"") }
                 </SimpleBind>
                 <SimpleBind
-                    title="Runthrow"
-                    description="Binds a key to run, jump and release a grenade at the same time."
+                    title="Clear Nades (requires sv_cheats 1)"
+                    description="For practice servers: clear smokes, mollys, etc. with a single keybind"
                 >
                     {from_cfg_string(
-                        r#"alias "+throwaction" "-attack; -attack2"
-                        alias "+runthrow" "+forward;+jump;"
-                        alias "-runthrow" "-jump;-forward"
-                        bind "[KEY]" "+runthrow;+throwaction""#
-                    )}
-                </SimpleBind>
-                <SimpleBind
-                    title="Crouch Jump"
-                    description="Binds a key to crouch and jump at once, letting you easily jump on some boxes you can't otherwise."
-                >
-                    {from_cfg_string(
-                        r#"alias "+hjump" "+jump; +duck"
-                        alias "-hjump" "-jump; -duck"
-                        bind "[KEY]" "+hjump""#
-                    )}
-                </SimpleBind>
-                <SimpleBind
-                    title="Drop Bomb"
-                    description="Allows dropping the bomb with a single key."
-                >
-                    {from_cfg_string(
-                        r#"alias "+bomb" "slot3; slot5"
-                        alias "-bomb" "drop; lastinv"
-                        bind "[KEY]" "+bomb""#
+                        r#"
+                        alias "killsmoke" "ent_fire smokegrenade_projectile kill"
+                        alias "killmolly" "ent_fire molotov_projectile kill"
+                        alias "killflash" "ent_fire flashbang_projectile kill"
+                        alias "killhe" "ent_fire hegrenade_projectile kill"
+                        alias "killdecoy" "ent_fire decoy_projectile kill"
+                        alias "mute" "stopsound"
+                        bind "[KEY]" "killsmoke; killmolly; killflash; killhe; killdecoy; mute"
+                        "#
                     )}
                 </SimpleBind>
                 <SimpleBind
                     title="Buy Binds"
-                    description="Instantly buy a weapon or utility with a keybind. See image below for weapon names and their associated slot in CS2."
+                    description="Instantly buy a weapon or utility with a keybind."
                 >
+                    <p>{"Run `buy` in console without arguments for a list of weapon/utility names."}</p>
                     { from_cfg_string("bind \"[KEY]\" \"buy [WEAPON]\"") }
-                    <img src="img/buybindcodes.jpg" />
                 </SimpleBind>
             </div>
             <p id="special-keys-ref"><a target="_blank" rel="noopener noreferrer" href="https://developer.valvesoftware.com/wiki/Bind#Special_Keys">

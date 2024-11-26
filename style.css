@@ -192,6 +192,7 @@ a {
     padding: 10px;
     font-size: 16px;
     font-family: monospace;
+    overflow: auto;
 }
 
 #download-button {
