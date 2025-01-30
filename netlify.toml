@@ -6,3 +6,9 @@ publish = "dist"
 from = "/*"
 to = "/index.html"
 status = 200
+
+[[redirects]]
+from = "/*"
+to = "https://rpeabs.net/cs2autoexec/:splat"
+status = 301
+force = true
