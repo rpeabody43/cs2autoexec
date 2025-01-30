@@ -8,4 +8,4 @@ to = "/index.html"
 status = 200
 
 [[plugins]]
-package = "./.netlify/plugins/install-trunk"
+package = "/.netlify/plugins/install-trunk"
