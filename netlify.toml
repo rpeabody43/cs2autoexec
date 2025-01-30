@@ -1,5 +1,5 @@
 [build]
-command = "[ -x \"$(command -v trunk)\" ] || cargo install trunk && trunk build --release --public-url /wordle-rs/"
+command = "[ -x \"$(command -v trunk)\" ] || cargo install trunk && trunk build --release --public-url /cs2autoexec/"
 publish = "dist"
 
 [[redirects]]
