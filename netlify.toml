@@ -1,12 +1,6 @@
 [build]
-command = "cargo install trunk && trunk build --release"
+command = "cargo install trunk --force && trunk build --release"
 publish = "dist"
-
-[build.environment]
-  CARGO_HOME = "/opt/buildhome/.cargo"
-
-[context.production]
-  cache = ["/opt/buildhome/.cargo/.crates.toml", "/opt/buildhome/.cargo/.crates2.json"]
 
 [[redirects]]
 from = "/*"
