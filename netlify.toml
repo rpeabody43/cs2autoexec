@@ -1,8 +1,11 @@
 [build]
-  command = "trunk build --release"
-  publish = "dist"
+command = "trunk build --release"
+publish = "dist"
 
 [[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
+from = "/*"
+to = "/index.html"
+status = 200
+
+[[plugins]]
+package = "./.netlify/plugins/install-trunk"
