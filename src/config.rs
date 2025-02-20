@@ -40,29 +40,25 @@ fn add_to_config(
 
 fn filter_config(config: &mut HashMap<String, String>) {
     let ignored_commands = vec![
-        "con_enable",
-        "sound_device_override",
-        "ui_mainmenu_bkgnd_movie_1016BB11",
-        "snd_menumusic_volume",
         "cachedvalue_count_partybrowser",
-        "cl_promoted_settings_acknowledged",
-        "csgo_map_preview_scale",
-        "cl_redemption_reset_timestamp",
-        "player_teamplayedlast",
-        "ui_playsettings_maps_listen_competitive",
-        "ui_inspect_bkgnd_map_B0B70CFF",
-        "ui_mainmenu_bkgnd_movie_B0B70CFF",
-        "ui_news_last_read_link",
-        "ui_playsettings_maps_official_gungameprogressive",
-        "ui_playsettings_maps_workshop",
-        "ui_playsettings_mode_official_v20",
-        "ui_popup_weaponupdate_version",
-        "ui_vanitysetting_loadoutslot_t",
-        "ui_vanitysetting_team",
         "cachedvalue_count_teammates",
+        "cl_embedded_stream_audio_volume",
+        "cl_promoted_settings_acknowledged",
+        "cl_redemption_reset_timestamp",
+        "con_enable",
+        "csgo_map_preview_scale",
         "lobby_default_privacy_bits2",
-        "player_competitive_maplist_2v2_10_0_C8D88986",
-        "player_competitive_maplist_8_10_0_5069769",
+        "panorama_console_position_and_size",
+        "player_nevershow_communityservermessage",
+        "player_teamplayedlast",
+        "r_show_build_info",
+        "sv_specspeed",
+        "ui_news_last_read_link",
+        "ui_playsettings_maps_listen_competitive",
+        "ui_playsettings_maps_listen_deathmatch",
+        "ui_playsettings_maps_official_gungameprogressive",
+        "ui_playsettings_mode_official_v20",
+        "voice_threshold",
     ];
     for command in ignored_commands {
         config.remove(command);
@@ -198,15 +194,16 @@ pub fn config_str(
             if &value == default_val {
                 continue;
             }
+            // The devs add new config options all the time, I'm choosing
+            // not to include the ones newer than the default config I have
+            settings_vec.push(format!("{} \"{}\"\n", key, value));
         }
-        settings_vec.push(format!("{} \"{}\"\n", key, value));
     }
     settings_vec.sort();
     out.push_str("// SETTINGS\n");
     for setting in settings_vec {
         out.push_str(&setting);
     }
-    out.push_str("\necho \"--- autoexec loaded ---\"\n// Generated at https://rpeabody43.github.io/cs2autoexec/");
+    out.push_str("\necho \"--- autoexec loaded ---\"\n// Generated at https://rpeabs.net/cs2autoexec/");
     out
-    // TODO Special Keybinds
 }
