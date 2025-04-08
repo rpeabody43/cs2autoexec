@@ -8,6 +8,7 @@ edition = "2021"
 [dependencies]
 yew = { version = "0.21.0", features = ["csr"] }
 yewdux = "0.9"
+tokio = "^1.38.2"
 web-sys = "0.3.64"
 wasm-bindgen = "0.2.74"
 wasm-bindgen-futures = "0.4.37"
