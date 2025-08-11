@@ -97,7 +97,8 @@ macro_rules! load_file {
     }};
 }
 
-async fn load_all_files(state: &mut State) {
+async fn load_all_files(dispatch: Dispatch<State>) {
+    let state = dispatch.get();
     let mut valid = true;
     for f in [&state.machine_convars, &state.user_convars, &state.binds] {
         if f.is_none() {
@@ -108,11 +109,18 @@ async fn load_all_files(state: &mut State) {
     if !valid {
         return;
     }
-    state.autoexec = Some(config::config_str(
-        load_file!(state.machine_convars),
-        load_file!(state.user_convars),
-        load_file!(state.binds),
-    ));
+
+    // Doing this outside reduce_mut since it requires awaiting JsFutures
+    let machine_convars = load_file!(state.machine_convars);
+    let user_convars = load_file!(state.user_convars);
+    let binds = load_file!(state.binds);
+
+    dispatch.reduce_mut(|state| 
+        state.autoexec = Some(config::config_str(
+            machine_convars,
+            user_convars,
+            binds
+    )));
 }
 
 fn download_file(text: &str) {
@@ -151,7 +159,7 @@ fn App() -> Html {
     });
 
     let autoexec_gen: Callback<MouseEvent> =
-        dispatch.reduce_mut_future_callback(|state| Box::pin(load_all_files(state)));
+        dispatch.future_callback(|dispatch| load_all_files(dispatch));
 
     let textbox_update = Callback::from(move |e: Event| {
         let target: EventTarget = e.target().expect("E should have a target");
