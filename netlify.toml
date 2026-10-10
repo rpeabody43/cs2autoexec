@@ -1,5 +1,5 @@
 [build]
-command = "[ -x \"$(command -v trunk)\" ] || cargo install trunk && trunk build --release"
+command = "[ -x \"$(command -v trunk)\" ] || cargo install --locked trunk && trunk build --release"
 publish = "dist"
 
 [[redirects]]
